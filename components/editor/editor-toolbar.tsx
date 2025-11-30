@@ -1,9 +1,10 @@
 'use client'
 
 import { useRef } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/retroui/Button'
+import { Card } from '@/components/retroui/Card'
 import { LanguageSelect } from '@/components/shared/language-select'
-import { Upload, Sparkles } from 'lucide-react'
+import { Upload, Sparkles, Bold, Italic, Underline } from 'lucide-react'
 import { useEditorStore, selectEffectiveLanguage } from '@/lib/store/editor-store'
 import { importFile } from '@/lib/file-handlers/import'
 import { toast } from 'sonner'
@@ -32,22 +33,6 @@ const SAMPLE_TEXTS_RU = [
 Ваще, это прикольный проект получился! Офигенные возможности открываются перед нами!!!
 
 Текст содержит арфографические ашипки и опичатки.`,
-
-  `На сегодняшний день компания осуществляет поставку товаров в соответствии с договором. Представляется возможным улучшить логистику в целях оптимизации расходов.
-
-Качество продукции соответствует стандартам. Качество подтверждено сертификатами. Качество — наш приоритет.
-
-Щас всё объясню, чё тут происходит. Нету никаких проблем с заказами!!!
-
-В доку|менте есть ошипки и нeправильные симвалы.`,
-
-  `При условии что все требования выполнены, проект будет завершён в срок. По большому счёту, это зависит от команды.
-
-Эффективность растёт. Эффективность измеряется. Эффективность важна.
-
-Как бы это сказать... Круто, что всё работает! Типа успех гарантирован!!!
-
-Призентация гатова, осталось праверить тэкст на ашибки.`
 ]
 
 const SAMPLE_TEXTS_EN = [
@@ -66,40 +51,6 @@ Our customers love the product. Our customers recommend us. Our customers stay l
 Basically, we're like super awesome at what we do!!! At the end of the day, it is what it is.
 
 This documant contains erors and typos that need to be fixd.`,
-
-  `With regard to the project timeline, it was determined that additional resources would be needed. As a matter of fact, this represents a significant opportunity.
-
-The team delivers results. The team exceeds expectations. The team works together.
-
-So yeah, this is gonna be epic!!! We're totally crushing it!!!
-
-Please reviw this text for speling and grammer mistakes.`,
-
-  `In the event that requirements change, we will adapt accordingly. It goes without saying that flexibility is key to success.
-
-Innovation drives growth. Innovation creates value. Innovation matters.
-
-Like, this is seriously cool stuff!!! Can't wait to see the results!!!
-
-The presentaton has sevral erorrs that need atention.`,
-
-  `Taking into consideration all factors, we recommend proceeding with caution. Needless to say, proper planning is essential.
-
-Performance improves daily. Performance metrics show progress. Performance is priority.
-
-Wow, this is absolutely amazing!!! Best thing ever!!!
-
-Chek this documnet for typoes and mispellings please.`,
-
-  `In accordance with the established guidelines, our organization is currently in the process of implementing a comprehensive digital transformation strategy. Due to the fact that technological advancements are occurring at an unprecedented rate, it is imperative that we take proactive measures to remain competitive in the marketplace.
-
-The marketing team analyzes customer behavior. The marketing team develops campaigns. The marketing team measures results. The marketing team optimizes strategies.
-
-At the end of the day, we need to think outside the box and leverage our core competencies to create synergies across all departments. It goes without saying that this paradigm shift will revolutionize how we do business!!!
-
-Our new platfrom offers incredable features and unparalelled performence. The user interfase is intutive and easy to navegate. We gaurantee complete satisfacton with our sevices.
-
-Moving forward, we will continue to prioritize customer satisfaction and operational excellence. As a matter of fact, our commitment to quality remains unwavering. Basically, we're like totally awesome at delivering value to our stakeholders!!!`
 ]
 
 export function EditorToolbar() {
@@ -125,7 +76,6 @@ export function EditorToolbar() {
       toast.error('Ошибка импорта файла')
     }
 
-    // Reset input
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -139,27 +89,66 @@ export function EditorToolbar() {
     toast.success(`Пример ${randomIndex + 1} из ${samples.length}`)
   }
 
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <LanguageSelect />
+  const handleFormat = (command: string) => {
+    document.execCommand(command, false)
+  }
 
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" onClick={handleSampleText}>
-          <Sparkles className="h-4 w-4 mr-2" />
-          Пример
-        </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".txt,.md,.docx"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        <Button variant="outline" size="sm" onClick={handleImportClick}>
-          <Upload className="h-4 w-4 mr-2" />
-          Импорт
-        </Button>
+  return (
+    <Card className="w-full p-3">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <LanguageSelect />
+
+          {/* Formatting buttons */}
+          <div className="flex items-center gap-1 border-l-2 border-border pl-3 ml-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleFormat('bold')}
+              title="Жирный (Ctrl+B)"
+              className="h-8 w-8"
+            >
+              <Bold className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleFormat('italic')}
+              title="Курсив (Ctrl+I)"
+              className="h-8 w-8"
+            >
+              <Italic className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleFormat('underline')}
+              title="Подчёркнутый (Ctrl+U)"
+              className="h-8 w-8"
+            >
+              <Underline className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={handleSampleText} className="gap-2">
+            <Sparkles className="h-4 w-4" />
+            Пример
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt,.md,.docx"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <Button variant="outline" size="sm" onClick={handleImportClick} className="gap-2">
+            <Upload className="h-4 w-4" />
+            Импорт
+          </Button>
+        </div>
       </div>
-    </div>
+    </Card>
   )
 }

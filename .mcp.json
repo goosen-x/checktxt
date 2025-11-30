@@ -6,6 +6,16 @@
         "shadcn@latest",
         "mcp"
       ]
+    },
+    "retroui": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-fetch"
+      ],
+      "env": {
+        "REGISTRY_URL": "https://retroui.dev/r"
+      }
     }
   }
 }

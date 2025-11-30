@@ -1,31 +1,50 @@
 'use client'
 
 import Link from 'next/link'
-import { FileText } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { FileText, ArrowLeft, Github } from 'lucide-react'
+import { Button } from '@/components/retroui/Button'
 
 export function Header() {
-  return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <FileText className="h-5 w-5" />
-          <span>TextCheck</span>
-        </Link>
+  const pathname = usePathname()
+  const isEditorPage = pathname === '/editor'
 
-        <nav className="flex items-center gap-4">
-          <Link
-            href="/policy"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Политика
+  return (
+    <header className="border-b-2 border-border bg-secondary-background">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <div className="flex items-center gap-4">
+          {isEditorPage && (
+            <Link href="/">
+              <Button variant="outline" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Главная
+              </Button>
+            </Link>
+          )}
+          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+            <div className="flex h-8 w-8 items-center justify-center rounded border-2 border-border bg-main shadow-[2px_2px_0px_0px_var(--border)]">
+              <FileText className="h-4 w-4 text-main-foreground" />
+            </div>
+            <span>TextCheck</span>
           </Link>
+        </div>
+
+        <nav className="flex items-center gap-3">
+          {!isEditorPage && (
+            <Link href="/editor">
+              <Button variant="default" size="sm">
+                Редактор
+              </Button>
+            </Link>
+          )}
           <a
             href="https://github.com/goosen-x/checktxt"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            GitHub
+            <Button variant="outline" size="icon" className="h-9 w-9">
+              <Github className="h-4 w-4" />
+            </Button>
           </a>
         </nav>
       </div>

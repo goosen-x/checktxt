@@ -1,8 +1,8 @@
 'use client'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/retroui/Card'
+import { Badge } from '@/components/retroui/Badge'
 import { useSettingsStore } from '@/lib/store/settings-store'
 import { useResultsStore } from '@/lib/store/results-store'
 import { ErrorsTab } from './errors-tab'
@@ -19,13 +19,14 @@ export function ResultsPanel() {
   const plagMatches = plagiarism?.matches.length || 0
 
   return (
-    <Card className="p-4">
+    <Card className="w-full p-4">
+      <h3 className="text-lg font-bold mb-4">Результаты</h3>
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
         <TabsList className="grid grid-cols-4 w-full">
-          <TabsTrigger value="errors" className="relative text-xs sm:text-sm">
+          <TabsTrigger value="errors" className="relative text-xs sm:text-sm gap-1">
             Ошибки
             {errorCount > 0 && (
-              <Badge variant="destructive" className="ml-1 h-5 min-w-5 px-1 text-xs">
+              <Badge variant="solid" size="sm">
                 {errorCount}
               </Badge>
             )}
@@ -33,18 +34,18 @@ export function ResultsPanel() {
           <TabsTrigger value="seo" className="text-xs sm:text-sm">
             SEO
           </TabsTrigger>
-          <TabsTrigger value="plagiarism" className="relative text-xs sm:text-sm">
+          <TabsTrigger value="plagiarism" className="relative text-xs sm:text-sm gap-1">
             Плагиат
             {plagMatches > 0 && (
-              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1 text-xs">
+              <Badge variant="default" size="sm">
                 {plagMatches}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="style" className="relative text-xs sm:text-sm">
+          <TabsTrigger value="style" className="relative text-xs sm:text-sm gap-1">
             Стиль
             {styleCount > 0 && (
-              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1 text-xs">
+              <Badge variant="default" size="sm">
                 {styleCount}
               </Badge>
             )}

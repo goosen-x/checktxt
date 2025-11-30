@@ -1,6 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/retroui/Button'
+import { Card } from '@/components/retroui/Card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +42,6 @@ export function ActionButtons() {
   }
 
   const handleApplyAll = () => {
-    // Apply only "safe" fixes (spelling errors with single suggestion)
     const safeHighlights = highlights.filter(
       h => h.type === 'error' && h.suggestions && h.suggestions.length === 1
     )
@@ -51,7 +51,6 @@ export function ActionButtons() {
       return
     }
 
-    // Apply in reverse order to maintain positions
     const sorted = [...safeHighlights].sort((a, b) => b.offset - a.offset)
 
     for (const h of sorted) {
@@ -108,57 +107,78 @@ export function ActionButtons() {
   )
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button onClick={handleCheck} disabled={isLoading || !text.trim()}>
-        {isLoading ? (
-          <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Проверка...
-          </>
-        ) : (
-          <>
-            <Play className="h-4 w-4 mr-2" />
-            Проверить
-          </>
-        )}
-      </Button>
+    <Card className="w-full p-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          onClick={handleCheck}
+          disabled={isLoading || !text.trim()}
+          size="md"
+          className="gap-2"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Проверка...
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Проверить
+            </>
+          )}
+        </Button>
 
-      <Button
-        variant="outline"
-        onClick={handleApplyAll}
-        disabled={!hasSafeHighlights}
-      >
-        <CheckCheck className="h-4 w-4 mr-2" />
-        Применить все
-      </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleApplyAll}
+          disabled={!hasSafeHighlights}
+          className="gap-2"
+        >
+          <CheckCheck className="h-4 w-4" />
+          Применить все
+        </Button>
 
-      <Button variant="outline" onClick={handleCopy} disabled={!text.trim()}>
-        <Copy className="h-4 w-4 mr-2" />
-        Копировать
-      </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopy}
+          disabled={!text.trim()}
+          className="gap-2"
+        >
+          <Copy className="h-4 w-4" />
+          Копировать
+        </Button>
 
-      <Button variant="outline" onClick={handleClear} disabled={!text.trim()}>
-        <Trash2 className="h-4 w-4 mr-2" />
-        Очистить
-      </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleClear}
+          disabled={!text.trim()}
+          className="gap-2"
+        >
+          <Trash2 className="h-4 w-4" />
+          Очистить
+        </Button>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" disabled={!text.trim()}>
-            <Download className="h-4 w-4 mr-2" />
-            Экспорт
-            <ChevronDown className="h-4 w-4 ml-1" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={handleExportMd}>
-            Markdown (.md)
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleExportDocx}>
-            Word (.docx)
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" disabled={!text.trim()} className="gap-2">
+              <Download className="h-4 w-4" />
+              Экспорт
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleExportMd}>
+              Markdown (.md)
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportDocx}>
+              Word (.docx)
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </Card>
   )
 }

@@ -133,9 +133,10 @@ export function TextEditor() {
         onInput={handleInput}
         onPaste={handlePaste}
         className={cn(
-          'min-h-[400px] w-full rounded-md border border-input bg-background px-3 py-2',
+          'min-h-[400px] w-full rounded-base border-2 border-border bg-secondary-background px-4 py-3',
           'text-base font-mono whitespace-pre-wrap break-words',
-          'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          'shadow-[4px_4px_0px_0px_var(--border)] transition-all',
+          'focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_var(--border)]',
           'empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground',
           'overflow-y-auto max-h-[60vh]'
         )}
