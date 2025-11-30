@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - LANGUAGETOOL_URL=http://languagetool:8010
+      - SERP_API_KEY=${SERP_API_KEY:-}
+    depends_on:
+      languagetool:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - textcheck-network
+
+  languagetool:
+    image: erikvl87/languagetool
+    ports:
+      - "8010:8010"
+    environment:
+      - Java_Xms=512m
+      - Java_Xmx=2g
+      - langtool_languageModel=/ngrams
+    volumes:
+      - languagetool-ngrams:/ngrams
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/v2/languages"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - textcheck-network
+
+volumes:
+  languagetool-ngrams:
+
+networks:
+  textcheck-network:
+    name: textcheck-network
