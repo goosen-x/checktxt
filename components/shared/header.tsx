@@ -20,7 +20,7 @@ export function Header() {
             Политика
           </Link>
           <a
-            href="https://github.com"
+            href="https://github.com/goosen-x/checktxt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
