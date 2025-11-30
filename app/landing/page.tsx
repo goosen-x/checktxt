@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Gravity, MatterBody } from '@/components/ui/gravity'
+import ClickSpark from '@/components/ui/click-spark'
 
 function GravityPills() {
   const pills = [
@@ -42,7 +43,8 @@ function GravityPills() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <ClickSpark sparkColor="#3b82f6" sparkSize={12} sparkRadius={20} sparkCount={8} duration={400}>
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div className="flex flex-col items-center pt-12">
         <main className="relative mt-20 w-full overflow-hidden px-6">
@@ -136,7 +138,8 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
-    </div>
+      </div>
+    </ClickSpark>
   )
 }
 
