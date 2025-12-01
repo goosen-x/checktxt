@@ -74,11 +74,18 @@ export default function HomePage() {
             {/* Left Column - Text */}
             <div className="flex flex-col items-start w-full">
               <h1 className="mb-4 text-5xl font-black tracking-tighter md:text-6xl lg:text-7xl">
-                <span className="text-main">Check</span>TXT
+                Check<span
+                  className="text-main"
+                  style={{
+                    textShadow: `-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black`
+                  }}
+                >TXT</span>
               </h1>
 
               <p className="text-foreground text-lg md:text-xl lg:text-2xl font-medium mb-8 max-w-lg">
-                Проверка текста на ошибки, стиль, повторы и плагиат
+                Найдём ошибки и опечатки.<br />
+                Улучшим стиль и читаемость.<br />
+                Проверим текст на уникальность.
               </p>
 
               <Link href="/editor" className="w-full sm:w-auto">

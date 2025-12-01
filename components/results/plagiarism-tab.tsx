@@ -28,9 +28,42 @@ export function PlagiarismTab() {
   if (isLoadingPlag) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-24 w-full" />
+        {/* Uniqueness score skeleton */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+          <Skeleton className="h-4 w-full" />
+          <div className="flex justify-between">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+        </div>
+
+        {/* Match cards skeleton */}
+        <div className="space-y-3">
+          <Skeleton className="h-4 w-40" />
+          {[1, 2].map((i) => (
+            <Card key={i} className="w-full p-0 overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)]">
+              <div className="w-full bg-muted px-3 py-2 border-b-2 border-border">
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+              <div className="w-full p-3 space-y-2 bg-secondary-background">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-3.5 w-3.5 shrink-0" />
+                  <Skeleton className="h-4 flex-1" />
+                  <Skeleton className="h-5 w-12 shrink-0" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-3.5 w-3.5 shrink-0" />
+                  <Skeleton className="h-4 flex-1" />
+                  <Skeleton className="h-5 w-12 shrink-0" />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     )
   }
@@ -43,17 +76,11 @@ export function PlagiarismTab() {
     )
   }
 
-  const uniquenessColor = plagiarism.uniqueness >= 80
-    ? 'text-main'
-    : plagiarism.uniqueness >= 50
-      ? 'text-foreground'
-      : 'text-foreground'
+  const isHigh = plagiarism.uniqueness >= 80
+  const isMedium = plagiarism.uniqueness >= 50 && plagiarism.uniqueness < 80
+  const isLow = plagiarism.uniqueness < 50
 
-  const uniquenessLabel = plagiarism.uniqueness >= 80
-    ? 'Высокая'
-    : plagiarism.uniqueness >= 50
-      ? 'Средняя'
-      : 'Низкая'
+  const uniquenessLabel = isHigh ? 'Высокая' : isMedium ? 'Средняя' : 'Низкая'
 
   return (
     <div className="space-y-4">
@@ -61,7 +88,12 @@ export function PlagiarismTab() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-sm">Уникальность</h4>
-            <span className={cn('text-2xl font-bold', uniquenessColor)}>
+            <span className={cn(
+              'text-2xl font-bold',
+              isHigh && 'text-main',
+              isMedium && 'text-warning',
+              isLow && 'text-destructive'
+            )}>
               {plagiarism.uniqueness}%
             </span>
           </div>
@@ -69,14 +101,21 @@ export function PlagiarismTab() {
             value={plagiarism.uniqueness}
             className={cn(
               'h-4 rounded-base',
-              plagiarism.uniqueness >= 80 && '[&>div]:bg-main',
-              plagiarism.uniqueness >= 50 && plagiarism.uniqueness < 80 && '[&>div]:bg-foreground',
-              plagiarism.uniqueness < 50 && '[&>div]:bg-foreground'
+              isHigh && '[&>div]:bg-main',
+              isMedium && '[&>div]:bg-warning',
+              isLow && '[&>div]:bg-destructive'
             )}
           />
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>Проверено фраз: {plagiarism.checkedPhrases}</span>
-            <Badge variant={plagiarism.uniqueness >= 80 ? 'surface' : 'solid'}>
+            <Badge
+              variant="outline"
+              className={cn(
+                isHigh && 'border-main text-main shadow-[2px_2px_0px_0px_var(--main)]',
+                isMedium && 'border-warning text-warning shadow-[2px_2px_0px_0px_var(--warning)]',
+                isLow && 'border-destructive text-destructive shadow-[2px_2px_0px_0px_var(--destructive)]'
+              )}
+            >
               {uniquenessLabel}
             </Badge>
           </div>
