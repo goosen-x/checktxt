@@ -74,7 +74,7 @@ export default function HomePage() {
             {/* Left Column - Text */}
             <div className="flex flex-col items-start w-full">
               <h1 className="mb-4 text-5xl font-black tracking-tighter md:text-6xl lg:text-7xl">
-                Check<span className="text-main">TXT</span>
+                <span className="text-main">Check</span>TXT
               </h1>
 
               <p className="text-foreground text-lg md:text-xl lg:text-2xl font-medium mb-8 max-w-lg">
