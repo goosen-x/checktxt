@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
 export const metadata = {
-  title: 'Политика конфиденциальности — TextCheck',
-  description: 'Политика обработки данных TextCheck',
+  title: 'Политика конфиденциальности — checkTXT',
+  description: 'Политика обработки данных checkTXT',
 }
 
 export default function PolicyPage() {
@@ -78,7 +78,7 @@ export default function PolicyPage() {
         </ul>
 
         <h2>7. Контакты</h2>
-        <p>По вопросам обработки данных: example@textcheck.app</p>
+        <p>По вопросам обработки данных: support@checktxt.ru</p>
       </article>
     </div>
   )

@@ -61,7 +61,7 @@ export const useSettingsStore = create<SettingsState>()(
       reset: () => set(initialState),
     }),
     {
-      name: 'textcheck:settings',
+      name: 'checktxt:settings',
     }
   )
 )

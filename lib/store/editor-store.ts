@@ -102,7 +102,7 @@ export const useEditorStore = create<EditorState>()(
       reset: () => set(initialState),
     }),
     {
-      name: 'textcheck:editor',
+      name: 'checktxt:editor',
       partialize: (state) => ({
         text: state.text,
         language: state.language,
