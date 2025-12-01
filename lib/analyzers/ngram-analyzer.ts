@@ -1,37 +1,43 @@
 import type { Language, NgramResult } from '@/lib/types'
 import { NGRAM_MIN_COUNT, NGRAM_MAX_N } from '@/lib/constants'
 
-/**
- * Tokenize text into words.
- */
-function tokenize(text: string, _language: Language): string[] {
-  // Remove punctuation but keep words
-  const cleaned = text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ')
-  return cleaned.split(/\s+/).filter(word => word.length > 0)
+interface TokenWithOffset {
+  word: string
+  offset: number
 }
 
 /**
- * Generate n-grams from an array of tokens.
+ * Tokenize text into words with their original offsets.
  */
-function generateNgrams(tokens: string[], n: number): Map<string, number[]> {
+function tokenizeWithOffsets(text: string): TokenWithOffset[] {
+  const tokens: TokenWithOffset[] = []
+  const regex = /[\p{L}\p{N}]+/gu
+  let match
+
+  while ((match = regex.exec(text)) !== null) {
+    tokens.push({
+      word: match[0].toLowerCase(),
+      offset: match.index,
+    })
+  }
+
+  return tokens
+}
+
+/**
+ * Generate n-grams from tokens with original text offsets.
+ */
+function generateNgrams(tokens: TokenWithOffset[], n: number, originalText: string): Map<string, number[]> {
   const ngrams = new Map<string, number[]>()
 
   if (tokens.length < n) {
     return ngrams
   }
 
-  // Calculate character offset for each token
-  let charOffset = 0
-  const tokenOffsets: number[] = []
-
-  for (let i = 0; i < tokens.length; i++) {
-    tokenOffsets.push(charOffset)
-    charOffset += tokens[i].length + 1 // +1 for space
-  }
-
   for (let i = 0; i <= tokens.length - n; i++) {
-    const ngram = tokens.slice(i, i + n).join(' ')
-    const offset = tokenOffsets[i]
+    const ngramTokens = tokens.slice(i, i + n)
+    const ngram = ngramTokens.map(t => t.word).join(' ')
+    const offset = ngramTokens[0].offset
 
     if (!ngrams.has(ngram)) {
       ngrams.set(ngram, [])
@@ -51,7 +57,7 @@ export function analyzeNgrams(
   minCount: number = NGRAM_MIN_COUNT,
   maxN: number = NGRAM_MAX_N
 ): NgramResult[] {
-  const tokens = tokenize(text, language)
+  const tokens = tokenizeWithOffsets(text)
   const results: NgramResult[] = []
 
   // Stop words to filter out common words
@@ -73,7 +79,7 @@ export function analyzeNgrams(
 
   // Analyze n-grams from 1 to maxN
   for (let n = 1; n <= maxN; n++) {
-    const ngrams = generateNgrams(tokens, n)
+    const ngrams = generateNgrams(tokens, n, text)
 
     for (const [ngram, positions] of ngrams) {
       // Skip if count is below threshold

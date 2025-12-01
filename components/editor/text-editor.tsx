@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useMemo } from 'react'
 import { useEditorStore, selectWordCount, selectCharCount } from '@/lib/store/editor-store'
 import { detectLanguage } from '@/lib/analyzers/language-detector'
 import { WordCounter } from './word-counter'
@@ -22,9 +22,9 @@ export function TextEditor() {
   const wordCount = useEditorStore(selectWordCount)
   const charCount = useEditorStore(selectCharCount)
 
-  const editorRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
   const detectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const [isFocused, setIsFocused] = useState(false)
 
   // Debounced language detection
   useEffect(() => {
@@ -46,31 +46,28 @@ export function TextEditor() {
     }
   }, [text, setDetectedLanguage])
 
-  // Handle input in contenteditable
-  const handleInput = useCallback(() => {
-    if (editorRef.current) {
-      const newText = editorRef.current.innerText || ''
-      if (newText.length <= CHAR_LIMIT) {
-        setText(newText)
-      } else {
-        const truncated = newText.slice(0, CHAR_LIMIT)
-        setText(truncated)
-        editorRef.current.innerText = truncated
-      }
+  // Handle text change
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value
+    if (newText.length <= CHAR_LIMIT) {
+      setText(newText)
+    } else {
+      setText(newText.slice(0, CHAR_LIMIT))
     }
   }, [setText])
 
-  // Handle paste - strip formatting
-  const handlePaste = useCallback((e: React.ClipboardEvent) => {
-    e.preventDefault()
-    const plainText = e.clipboardData.getData('text/plain')
-    document.execCommand('insertText', false, plainText)
+  // Sync scroll between textarea and overlay
+  const syncScroll = useCallback(() => {
+    if (overlayRef.current && textareaRef.current) {
+      overlayRef.current.scrollTop = textareaRef.current.scrollTop
+      overlayRef.current.scrollLeft = textareaRef.current.scrollLeft
+    }
   }, [])
 
-  // Render text with highlights (only when not focused)
-  const renderedContent = useMemo(() => {
-    if (highlights.length === 0 || isFocused) {
-      return null
+  // Render text with highlights for overlay
+  const renderedHighlights = useMemo(() => {
+    if (highlights.length === 0) {
+      return text
     }
 
     // Sort highlights by offset
@@ -82,7 +79,11 @@ export function TextEditor() {
     for (const highlight of sortedHighlights) {
       // Add text before highlight
       if (highlight.offset > lastIndex) {
-        parts.push(text.slice(lastIndex, highlight.offset))
+        parts.push(
+          <span key={`text-${lastIndex}`}>
+            {text.slice(lastIndex, highlight.offset)}
+          </span>
+        )
       }
 
       // Add highlighted text
@@ -95,19 +96,25 @@ export function TextEditor() {
             <span
               data-highlight-id={highlight.id}
               className={cn(
-                'cursor-pointer transition-colors',
-                highlight.type === 'error' && 'bg-destructive/10 underline decoration-wavy decoration-destructive',
-                highlight.type === 'style' && 'bg-warning/10 underline decoration-wavy decoration-warning',
-                highlight.type === 'repeat' && 'bg-blue-100 dark:bg-blue-900/30',
-                highlight.type === 'plagiarism' && 'bg-purple-100 dark:bg-purple-900/30',
-                isActive && 'ring-2 ring-primary ring-offset-1'
+                'cursor-pointer pointer-events-auto',
+                highlight.type === 'error' && 'bg-destructive/20 underline decoration-wavy decoration-destructive',
+                highlight.type === 'style' && 'bg-warning/20 underline decoration-wavy decoration-warning',
+                highlight.type === 'repeat' && 'bg-blue-200 dark:bg-blue-900/50',
+                highlight.type === 'plagiarism' && 'bg-purple-200 dark:bg-purple-900/50',
+                isActive && 'ring-2 ring-primary'
               )}
               onClick={() => setActiveHighlight(highlight.id)}
             >
               {highlightText}
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
+          <TooltipContent
+            side="top"
+            align="center"
+            sideOffset={8}
+            collisionPadding={10}
+            className="max-w-xs"
+          >
             <p>{highlight.message}</p>
             {highlight.suggestions && highlight.suggestions.length > 0 && (
               <p className="text-xs text-muted-foreground mt-1">
@@ -123,55 +130,51 @@ export function TextEditor() {
 
     // Add remaining text
     if (lastIndex < text.length) {
-      parts.push(text.slice(lastIndex))
+      parts.push(
+        <span key={`text-${lastIndex}`}>
+          {text.slice(lastIndex)}
+        </span>
+      )
     }
 
     return parts
-  }, [text, highlights, activeHighlight, setActiveHighlight, isFocused])
+  }, [text, highlights, activeHighlight, setActiveHighlight])
 
-  // Sync content when text changes externally (e.g., from import) or focus changes
-  useEffect(() => {
-    if (editorRef.current) {
-      const currentText = editorRef.current.innerText || ''
-      if (currentText !== text) {
-        editorRef.current.innerText = text
-      }
-    }
-  }, [text, isFocused])
-
-  const showHighlights = highlights.length > 0 && !isFocused && renderedContent
+  const baseStyles = 'min-h-[350px] w-full px-4 py-3 text-base font-normal whitespace-pre-wrap break-words leading-relaxed'
 
   return (
     <div className="space-y-3">
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        onPaste={handlePaste}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className={cn(
-          'min-h-[350px] w-full rounded-base border-2 border-border bg-secondary-background px-4 py-3',
-          'text-base font-normal whitespace-pre-wrap break-words',
-          'transition-all',
-          'focus:outline-none',
-          'empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground',
-          'overflow-y-auto max-h-[60vh]'
-        )}
-        data-placeholder="Введите или вставьте текст для проверки..."
-        role="textbox"
-        aria-multiline="true"
-        aria-label="Текстовый редактор"
-      >
-        {showHighlights ? renderedContent : text}
-      </div>
+      <div className="relative rounded-base border-2 border-border bg-secondary-background overflow-hidden">
+        {/* Textarea - invisible text, visible caret */}
+        <textarea
+          ref={textareaRef}
+          value={text}
+          onChange={handleChange}
+          onScroll={syncScroll}
+          placeholder="Введите или вставьте текст для проверки..."
+          className={cn(
+            baseStyles,
+            'relative bg-transparent resize-none outline-none text-transparent caret-foreground',
+            'max-h-[60vh] overflow-y-auto',
+            'placeholder:text-muted-foreground',
+            '[&::selection]:bg-transparent [&::selection]:text-transparent'
+          )}
+          style={{ caretColor: 'var(--foreground)' }}
+          aria-label="Текстовый редактор"
+        />
 
-      {highlights.length > 0 && isFocused && (
-        <p className="text-xs text-muted-foreground">
-          Подсветка ошибок появится после завершения редактирования
-        </p>
-      )}
+        {/* Highlight overlay - shows visible text with highlights */}
+        <div
+          ref={overlayRef}
+          className={cn(
+            baseStyles,
+            'absolute inset-0 z-10 pointer-events-none select-none overflow-y-auto'
+          )}
+          aria-hidden="true"
+        >
+          {renderedHighlights}
+        </div>
+      </div>
 
       <div className="flex items-center justify-between flex-wrap gap-2">
         <WordCounter words={wordCount} chars={charCount} />
