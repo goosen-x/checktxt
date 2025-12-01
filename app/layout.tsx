@@ -11,7 +11,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'checkTXT — Проверка текста',
+  title: 'CheckTXT — Проверка текста',
   description: 'Проверка орфографии, грамматики, стиля, SEO и плагиата',
 }
 

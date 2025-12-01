@@ -17,7 +17,7 @@ export function Header() {
           <div className="flex h-9 w-9 items-center justify-center rounded border-2 border-border bg-main shadow-[2px_2px_0px_0px_var(--border)]">
             <FileText className="h-4 w-4 text-main-foreground" />
           </div>
-          <span>checkTXT</span>
+          <span>CheckTXT</span>
         </Link>
 
         <nav className="flex items-center gap-3">
