@@ -2,7 +2,6 @@
 
 import { useResultsStore } from '@/lib/store/results-store'
 import { useSettingsStore } from '@/lib/store/settings-store'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Progress } from '@/components/ui/progress'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -57,8 +56,7 @@ export function PlagiarismTab() {
       : 'Низкая'
 
   return (
-    <ScrollArea className="h-[400px] pr-4">
-      <div className="space-y-4">
+    <div className="space-y-4">
         {/* Uniqueness score */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -121,7 +119,6 @@ export function PlagiarismTab() {
             </p>
           </div>
         )}
-      </div>
-    </ScrollArea>
+    </div>
   )
 }

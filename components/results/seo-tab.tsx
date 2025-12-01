@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { useResultsStore } from '@/lib/store/results-store'
 import { useSettingsStore } from '@/lib/store/settings-store'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { X, Plus, AlertTriangle, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -31,8 +31,7 @@ export function SEOTab() {
   }
 
   return (
-    <ScrollArea className="h-[400px] pr-4">
-      <div className="space-y-4">
+    <div className="space-y-4">
         {/* Keyword input */}
         <div className="space-y-2">
           <h4 className="font-medium text-sm">Ключевые слова</h4>
@@ -44,9 +43,14 @@ export function SEOTab() {
               onKeyPress={handleKeyPress}
               className="flex-1"
             />
-            <Button size="sm" onClick={handleAddKeyword}>
-              <Plus className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="sm" onClick={handleAddKeyword}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Добавить ключевое слово</TooltipContent>
+            </Tooltip>
           </div>
 
           {seoKeywords.length > 0 && (
@@ -54,9 +58,14 @@ export function SEOTab() {
               {seoKeywords.map((keyword) => (
                 <Badge key={keyword} variant="secondary" className="gap-1">
                   {keyword}
-                  <button onClick={() => removeSeoKeyword(keyword)}>
-                    <X className="h-3 w-3" />
-                  </button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={() => removeSeoKeyword(keyword)}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Удалить</TooltipContent>
+                  </Tooltip>
                 </Badge>
               ))}
             </div>
@@ -167,7 +176,6 @@ export function SEOTab() {
             Нажмите &quot;Проверить&quot; для анализа SEO
           </p>
         )}
-      </div>
-    </ScrollArea>
+    </div>
   )
 }

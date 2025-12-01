@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { useEditorStore, selectEffectiveLanguage } from '@/lib/store/editor-store'
 import { useSettingsStore } from '@/lib/store/settings-store'
 import { useResultsStore, selectIsAnyLoading } from '@/lib/store/results-store'
@@ -108,76 +109,95 @@ export function ActionButtons() {
 
   return (
     <Card className="w-full p-3">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Main action */}
         <Button
           onClick={handleCheck}
           disabled={isLoading || !text.trim()}
-          size="md"
-          className="gap-2"
+          size="lg"
+          className="gap-2 px-8"
         >
           {isLoading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
               Проверка...
             </>
           ) : (
             <>
-              <Play className="h-4 w-4" />
+              <Play className="h-5 w-5" />
               Проверить
             </>
           )}
         </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleApplyAll}
-          disabled={!hasSafeHighlights}
-          className="gap-2"
-        >
-          <CheckCheck className="h-4 w-4" />
-          Применить все
-        </Button>
+        {/* Secondary actions */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleApplyAll}
+                disabled={!hasSafeHighlights}
+                className="gap-1.5"
+              >
+                <CheckCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Применить все</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Применить безопасные исправления</TooltipContent>
+          </Tooltip>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleCopy}
-          disabled={!text.trim()}
-          className="gap-2"
-        >
-          <Copy className="h-4 w-4" />
-          Копировать
-        </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                disabled={!text.trim()}
+                className="gap-1.5"
+              >
+                <Copy className="h-4 w-4" />
+                <span className="hidden sm:inline">Копировать</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Копировать текст</TooltipContent>
+          </Tooltip>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleClear}
-          disabled={!text.trim()}
-          className="gap-2"
-        >
-          <Trash2 className="h-4 w-4" />
-          Очистить
-        </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClear}
+                disabled={!text.trim()}
+                className="gap-1.5"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Очистить</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Очистить всё</TooltipContent>
+          </Tooltip>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" disabled={!text.trim()} className="gap-2">
-              <Download className="h-4 w-4" />
-              Экспорт
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleExportMd}>
-              Markdown (.md)
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleExportDocx}>
-              Word (.docx)
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={!text.trim()} className="gap-1.5">
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline">Экспорт</span>
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={handleExportMd}>
+                Markdown (.md)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportDocx}>
+                Word (.docx)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </Card>
   )

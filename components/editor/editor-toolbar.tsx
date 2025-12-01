@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { Button } from '@/components/retroui/Button'
 import { Card } from '@/components/retroui/Card'
 import { LanguageSelect } from '@/components/shared/language-select'
-import { Upload, Sparkles, Bold, Italic, Underline } from 'lucide-react'
+import { Upload, Sparkles } from 'lucide-react'
 import { useEditorStore, selectEffectiveLanguage } from '@/lib/store/editor-store'
 import { importFile } from '@/lib/file-handlers/import'
 import { toast } from 'sonner'
@@ -89,50 +89,13 @@ export function EditorToolbar() {
     toast.success(`Пример ${randomIndex + 1} из ${samples.length}`)
   }
 
-  const handleFormat = (command: string) => {
-    document.execCommand(command, false)
-  }
-
   return (
-    <Card className="w-full p-3">
+    <Card className="w-full p-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <LanguageSelect />
+        <LanguageSelect />
 
-          {/* Formatting buttons */}
-          <div className="flex items-center gap-1 border-l-2 border-border pl-3 ml-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleFormat('bold')}
-              title="Жирный (Ctrl+B)"
-              className="h-8 w-8"
-            >
-              <Bold className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleFormat('italic')}
-              title="Курсив (Ctrl+I)"
-              className="h-8 w-8"
-            >
-              <Italic className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleFormat('underline')}
-              title="Подчёркнутый (Ctrl+U)"
-              className="h-8 w-8"
-            >
-              <Underline className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={handleSampleText} className="gap-2">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={handleSampleText} className="gap-2">
             <Sparkles className="h-4 w-4" />
             Пример
           </Button>

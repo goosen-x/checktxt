@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import { useResultsStore } from '@/lib/store/results-store'
 import { useEditorStore, selectEffectiveLanguage } from '@/lib/store/editor-store'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { IssueCard } from './issue-card'
 import { ChevronDown, ChevronRight } from 'lucide-react'
@@ -54,8 +53,7 @@ export function StyleTab() {
   const totalIssues = Object.values(styleByType).reduce((sum, arr) => sum + arr.length, 0)
 
   return (
-    <ScrollArea className="h-[400px] pr-4">
-      <div className="space-y-4">
+    <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h4 className="font-medium text-sm">Найдено проблем</h4>
           <Badge variant="secondary">{totalIssues}</Badge>
@@ -69,7 +67,7 @@ export function StyleTab() {
             <div key={type} className="space-y-2">
               <button
                 onClick={() => toggleType(type)}
-                className="flex items-center gap-2 w-full text-left"
+                className="flex items-center gap-2 w-full text-left px-2 py-1 rounded-base hover:bg-secondary-background transition-colors"
               >
                 {expandedTypes.has(type) ? (
                   <ChevronDown className="h-4 w-4" />
@@ -115,7 +113,6 @@ export function StyleTab() {
             </div>
           )
         })}
-      </div>
-    </ScrollArea>
+    </div>
   )
 }

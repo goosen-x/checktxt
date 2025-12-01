@@ -5,17 +5,10 @@ import { ResultsPanel } from '@/components/results/results-panel'
 
 export default function EditorPage() {
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      {/* Toolbar */}
+    <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
       <EditorToolbar />
-
-      {/* Full-width Editor */}
       <TextEditor />
-
-      {/* Action Buttons */}
       <ActionButtons />
-
-      {/* Results Panel at the bottom */}
       <ResultsPanel />
     </div>
   )

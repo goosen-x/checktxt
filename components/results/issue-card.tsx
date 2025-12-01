@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { X, Check } from 'lucide-react'
 
@@ -24,7 +25,7 @@ export function IssueCard({
 }: IssueCardProps) {
   return (
     <Card className={cn(
-      'p-3',
+      'p-3 shadow-none',
       variant === 'error' && 'border-red-200 dark:border-red-900',
       variant === 'warning' && 'border-amber-200 dark:border-amber-900',
       variant === 'info' && 'border-blue-200 dark:border-blue-900'
@@ -43,14 +44,19 @@ export function IssueCard({
             <p className="text-sm text-muted-foreground mt-1">{message}</p>
           </div>
           {onDismiss && (
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onDismiss}
-              className="shrink-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={onDismiss}
+                  className="shrink-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Пропустить</TooltipContent>
+            </Tooltip>
           )}
         </div>
 

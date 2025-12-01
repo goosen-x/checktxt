@@ -4,7 +4,7 @@ import { NGRAM_MIN_COUNT, NGRAM_MAX_N } from '@/lib/constants'
 /**
  * Tokenize text into words.
  */
-function tokenize(text: string, language: Language): string[] {
+function tokenize(text: string, _language: Language): string[] {
   // Remove punctuation but keep words
   const cleaned = text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ')
   return cleaned.split(/\s+/).filter(word => word.length > 0)

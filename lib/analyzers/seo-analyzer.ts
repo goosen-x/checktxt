@@ -158,7 +158,7 @@ function extractTopLemmas(
   return Array.from(lemmaCounts.entries())
     .sort((a, b) => b[1].count - a[1].count)
     .slice(0, count)
-    .map(([_, data]) => ({ word: data.original, count: data.count }))
+    .map(([, data]) => ({ word: data.original, count: data.count }))
 }
 
 /**

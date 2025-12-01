@@ -4,13 +4,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { FileText, ArrowLeft, Github } from 'lucide-react'
 import { Button } from '@/components/retroui/Button'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 
 export function Header() {
   const pathname = usePathname()
   const isEditorPage = pathname === '/editor'
 
   return (
-    <header className="border-b-2 border-border bg-secondary-background">
+    <header className="border-b-2 border-border bg-secondary-background shadow-[0_4px_0px_0px_var(--border)]">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-4">
           {isEditorPage && (
@@ -37,15 +38,20 @@ export function Header() {
               </Button>
             </Link>
           )}
-          <a
-            href="https://github.com/goosen-x/checktxt"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button variant="outline" size="icon" className="h-9 w-9">
-              <Github className="h-4 w-4" />
-            </Button>
-          </a>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <a
+                href="https://github.com/goosen-x/checktxt"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="icon" className="h-9 w-9">
+                  <Github className="h-4 w-4" />
+                </Button>
+              </a>
+            </TooltipTrigger>
+            <TooltipContent>Открыть на GitHub</TooltipContent>
+          </Tooltip>
         </nav>
       </div>
     </header>

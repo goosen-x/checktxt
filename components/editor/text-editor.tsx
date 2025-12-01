@@ -1,10 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useMemo } from 'react'
+import { useCallback, useEffect, useRef, useMemo, useState } from 'react'
 import { useEditorStore, selectWordCount, selectCharCount } from '@/lib/store/editor-store'
 import { detectLanguage } from '@/lib/analyzers/language-detector'
 import { WordCounter } from './word-counter'
 import { PrivacyToggle } from '@/components/shared/privacy-toggle'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { CHAR_LIMIT, DEBOUNCE_DELAY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +24,7 @@ export function TextEditor() {
 
   const editorRef = useRef<HTMLDivElement>(null)
   const detectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [isFocused, setIsFocused] = useState(false)
 
   // Debounced language detection
   useEffect(() => {
@@ -51,7 +53,6 @@ export function TextEditor() {
       if (newText.length <= CHAR_LIMIT) {
         setText(newText)
       } else {
-        // Truncate and restore cursor
         const truncated = newText.slice(0, CHAR_LIMIT)
         setText(truncated)
         editorRef.current.innerText = truncated
@@ -66,10 +67,10 @@ export function TextEditor() {
     document.execCommand('insertText', false, plainText)
   }, [])
 
-  // Render text with highlights
+  // Render text with highlights (only when not focused)
   const renderedContent = useMemo(() => {
-    if (highlights.length === 0) {
-      return text
+    if (highlights.length === 0 || isFocused) {
+      return null
     }
 
     // Sort highlights by offset
@@ -89,21 +90,32 @@ export function TextEditor() {
       const isActive = activeHighlight === highlight.id
 
       parts.push(
-        <span
-          key={highlight.id}
-          data-highlight-id={highlight.id}
-          className={cn(
-            'cursor-pointer transition-colors',
-            highlight.type === 'error' && 'bg-red-100 dark:bg-red-900/30 underline decoration-wavy decoration-red-500',
-            highlight.type === 'style' && 'bg-amber-100 dark:bg-amber-900/30 underline decoration-wavy decoration-amber-500',
-            highlight.type === 'repeat' && 'bg-blue-100 dark:bg-blue-900/30',
-            highlight.type === 'plagiarism' && 'bg-purple-100 dark:bg-purple-900/30',
-            isActive && 'ring-2 ring-primary ring-offset-1'
-          )}
-          onClick={() => setActiveHighlight(highlight.id)}
-        >
-          {highlightText}
-        </span>
+        <Tooltip key={highlight.id}>
+          <TooltipTrigger asChild>
+            <span
+              data-highlight-id={highlight.id}
+              className={cn(
+                'cursor-pointer transition-colors',
+                highlight.type === 'error' && 'bg-red-100 dark:bg-red-900/30 underline decoration-wavy decoration-red-500',
+                highlight.type === 'style' && 'bg-amber-100 dark:bg-amber-900/30 underline decoration-wavy decoration-amber-500',
+                highlight.type === 'repeat' && 'bg-blue-100 dark:bg-blue-900/30',
+                highlight.type === 'plagiarism' && 'bg-purple-100 dark:bg-purple-900/30',
+                isActive && 'ring-2 ring-primary ring-offset-1'
+              )}
+              onClick={() => setActiveHighlight(highlight.id)}
+            >
+              {highlightText}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <p>{highlight.message}</p>
+            {highlight.suggestions && highlight.suggestions.length > 0 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Замена: {highlight.suggestions.slice(0, 3).join(', ')}
+              </p>
+            )}
+          </TooltipContent>
+        </Tooltip>
       )
 
       lastIndex = highlight.offset + highlight.length
@@ -115,14 +127,19 @@ export function TextEditor() {
     }
 
     return parts
-  }, [text, highlights, activeHighlight, setActiveHighlight])
+  }, [text, highlights, activeHighlight, setActiveHighlight, isFocused])
 
-  // Sync content when text changes externally (e.g., from import)
+  // Sync content when text changes externally (e.g., from import) or focus changes
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerText !== text) {
-      editorRef.current.innerText = text
+    if (editorRef.current) {
+      const currentText = editorRef.current.innerText || ''
+      if (currentText !== text) {
+        editorRef.current.innerText = text
+      }
     }
-  }, [text])
+  }, [text, isFocused])
+
+  const showHighlights = highlights.length > 0 && !isFocused && renderedContent
 
   return (
     <div className="space-y-3">
@@ -132,11 +149,13 @@ export function TextEditor() {
         suppressContentEditableWarning
         onInput={handleInput}
         onPaste={handlePaste}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         className={cn(
-          'min-h-[400px] w-full rounded-base border-2 border-border bg-secondary-background px-4 py-3',
-          'text-base font-mono whitespace-pre-wrap break-words',
-          'shadow-[4px_4px_0px_0px_var(--border)] transition-all',
-          'focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_var(--border)]',
+          'min-h-[350px] w-full rounded-base border-2 border-border bg-secondary-background px-4 py-3',
+          'text-base whitespace-pre-wrap break-words',
+          'transition-all',
+          'focus:outline-none',
           'empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground',
           'overflow-y-auto max-h-[60vh]'
         )}
@@ -145,8 +164,14 @@ export function TextEditor() {
         aria-multiline="true"
         aria-label="Текстовый редактор"
       >
-        {highlights.length > 0 ? renderedContent : text}
+        {showHighlights ? renderedContent : text}
       </div>
+
+      {highlights.length > 0 && isFocused && (
+        <p className="text-xs text-muted-foreground">
+          Подсветка ошибок появится после завершения редактирования
+        </p>
+      )}
 
       <div className="flex items-center justify-between flex-wrap gap-2">
         <WordCounter words={wordCount} chars={charCount} />

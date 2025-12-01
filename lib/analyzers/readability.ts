@@ -62,7 +62,7 @@ function determineLevel(avgSentenceLength: number): 'easy' | 'medium' | 'hard' {
  */
 export function analyzeReadability(
   text: string,
-  language: Language
+  _language: Language
 ): ReadabilityResult {
   const sentences = splitIntoSentences(text)
   const sentenceCount = sentences.length

@@ -215,17 +215,22 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
         const y = calculatePosition(props.y, canvasRect.height, height)
 
         let body
+        // Filter out null chamfer to fix type incompatibility
+        const { chamfer, ...restBodyOptions } = props.matterBodyOptions || {}
+        const bodyOptions = {
+          ...restBodyOptions,
+          ...(chamfer != null ? { chamfer } : {}),
+          angle: angle,
+          render: {
+            fillStyle: debug ? '#888888' : '#00000000',
+            strokeStyle: debug ? '#333333' : '#00000000',
+            lineWidth: debug ? 3 : 0,
+          },
+        }
+
         if (props.bodyType === 'circle') {
           const radius = Math.max(width, height) / 2
-          body = Bodies.circle(x, y, radius, {
-            ...props.matterBodyOptions,
-            angle: angle,
-            render: {
-              fillStyle: debug ? '#888888' : '#00000000',
-              strokeStyle: debug ? '#333333' : '#00000000',
-              lineWidth: debug ? 3 : 0,
-            },
-          })
+          body = Bodies.circle(x, y, radius, bodyOptions)
         } else if (props.bodyType === 'svg') {
           const paths = element.querySelectorAll('path')
           const vertexSets: Matter.Vector[][] = []
@@ -236,25 +241,9 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
             vertexSets.push(p)
           })
 
-          body = Bodies.fromVertices(x, y, vertexSets, {
-            ...props.matterBodyOptions,
-            angle: angle,
-            render: {
-              fillStyle: debug ? '#888888' : '#00000000',
-              strokeStyle: debug ? '#333333' : '#00000000',
-              lineWidth: debug ? 3 : 0,
-            },
-          })
+          body = Bodies.fromVertices(x, y, vertexSets, bodyOptions)
         } else {
-          body = Bodies.rectangle(x, y, width, height, {
-            ...props.matterBodyOptions,
-            angle: angle,
-            render: {
-              fillStyle: debug ? '#888888' : '#00000000',
-              strokeStyle: debug ? '#333333' : '#00000000',
-              lineWidth: debug ? 3 : 0,
-            },
-          })
+          body = Bodies.rectangle(x, y, width, height, bodyOptions)
         }
 
         if (body) {

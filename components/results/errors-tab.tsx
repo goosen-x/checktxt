@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import { useResultsStore } from '@/lib/store/results-store'
 import { useEditorStore } from '@/lib/store/editor-store'
 import { IssueCard } from './issue-card'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -53,8 +52,7 @@ export function ErrorsTab() {
   const hasErrors = categoryEntries.length > 0
 
   return (
-    <ScrollArea className="h-[400px] pr-4">
-      <div className="space-y-4">
+    <div className="space-y-4">
         {/* Readability summary */}
         {readability && (
           <div className="space-y-2">
@@ -104,7 +102,7 @@ export function ErrorsTab() {
             <div key={category} className="space-y-2">
               <button
                 onClick={() => toggleCategory(category)}
-                className="flex items-center gap-2 w-full text-left"
+                className="flex items-center gap-2 w-full text-left px-2 py-1 rounded-base hover:bg-secondary-background transition-colors"
               >
                 {expandedCategories.has(category) ? (
                   <ChevronDown className="h-4 w-4" />
@@ -154,7 +152,6 @@ export function ErrorsTab() {
             </p>
           )
         )}
-      </div>
-    </ScrollArea>
+    </div>
   )
 }

@@ -31,7 +31,7 @@ function GravityPills() {
   }
 
   return (
-    <div className="relative h-[250px] w-full overflow-hidden">
+    <div className="relative h-[350px] lg:h-[400px] w-full overflow-hidden rounded-base border-2 border-border bg-secondary-background/50">
       <Gravity gravity={{ x: 0, y: 1 }} className="h-full w-full">
         {pills.map((pill, index) => (
           <MatterBody
@@ -56,41 +56,56 @@ function GravityPills() {
 export default function HomePage() {
   return (
     <ClickSpark sparkColor="#8AE500" sparkSize={12} sparkRadius={20} sparkCount={8} duration={400}>
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <div className="flex flex-col items-center pt-8 pb-4">
-          <main className="relative mt-12 w-full overflow-hidden px-6">
-            <h1 className="mb-4 text-center text-6xl font-black tracking-tighter md:text-[clamp(3rem,10vw,7rem)]">
-              Text<span className="text-main">Check</span>
-            </h1>
-            <p className="text-foreground px-6 text-center text-base md:text-xl lg:text-2xl font-medium">
-              Проверка текста на ошибки, стиль, повторы и плагиат
-            </p>
-            <div className="my-6 flex items-center justify-center">
-              <Badge variant="surface" size="md" className="gap-2">
+      <div className="min-h-screen bg-background relative">
+        {/* Grid Pattern Background */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.08] z-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, var(--border) 1px, transparent 1px),
+              linear-gradient(to bottom, var(--border) 1px, transparent 1px)
+            `,
+            backgroundSize: '24px 24px'
+          }}
+        />
+
+        {/* Hero Section - Two Columns */}
+        <section className="relative mx-auto max-w-7xl px-6 py-16 lg:py-24">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+            {/* Left Column - Text */}
+            <div className="flex flex-col items-start">
+              <Badge variant="surface" size="md" className="gap-2 mb-6">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
                 </span>
                 Бесплатно и без регистрации
               </Badge>
+
+              <h1 className="mb-4 text-5xl font-black tracking-tighter md:text-6xl lg:text-7xl">
+                Text<span className="text-main">Check</span>
+              </h1>
+
+              <p className="text-foreground text-lg md:text-xl lg:text-2xl font-medium mb-8 max-w-lg">
+                Проверка текста на ошибки, стиль, повторы и плагиат
+              </p>
+
+              <Link href="/editor">
+                <Button size="lg" variant="default" className="text-lg px-10 py-4 gap-2">
+                  Начать проверку
+                </Button>
+              </Link>
             </div>
-          </main>
 
-          <div className="mb-8">
-            <Link href="/editor">
-              <Button size="lg" variant="default" className="text-lg px-10 py-4 gap-2">
-                Начать проверку
-              </Button>
-            </Link>
+            {/* Right Column - Interactive Gravity Pills */}
+            <div className="lg:pl-8">
+              <GravityPills />
+            </div>
           </div>
-        </div>
-
-        {/* Gravity Pills Animation */}
-        <GravityPills />
+        </section>
 
         {/* Features Section */}
-        <section className="mx-auto max-w-6xl px-6 py-16">
+        <section className="relative z-10 mx-auto max-w-6xl px-6 py-16">
           <h2 className="mb-12 text-center text-4xl font-black">Возможности</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <FeatureCard
@@ -133,21 +148,27 @@ export default function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 px-6">
+        <section className="relative z-10 py-16 px-6">
           <div className="mx-auto max-w-4xl">
-            <Card className="w-full bg-main p-8 md:p-12 text-center">
-              <h2 className="mb-4 text-3xl md:text-4xl font-black text-main-foreground">
-                Готовы проверить текст?
-              </h2>
-              <p className="mb-8 text-main-foreground/80 text-lg">
-                Вставьте текст или загрузите файл (.txt, .md, .docx) — результат за секунды
-              </p>
-              <Link href="/editor">
-                <Button size="lg" variant="secondary" className="text-lg px-8">
-                  Открыть редактор
-                </Button>
-              </Link>
-            </Card>
+            <div className="w-full bg-main p-8 md:p-10 border-3 border-border rounded-base shadow-[8px_8px_0px_0px_var(--border)]">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="flex-1">
+                  <h2 className="text-2xl md:text-3xl font-black text-main-foreground mb-2">
+                    Готовы проверить текст?
+                  </h2>
+                  <p className="text-main-foreground/80 text-base md:text-lg">
+                    Вставьте текст или загрузите файл — результат за секунды
+                  </p>
+                </div>
+                <div className="flex-shrink-0">
+                  <Link href="/editor">
+                    <Button size="lg" variant="secondary" className="text-lg px-8 w-full md:w-auto">
+                      Открыть редактор
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -179,7 +200,7 @@ function FeatureCard({
   color: string
 }) {
   return (
-    <Card className="w-full p-6 hover:translate-y-1 transition-transform">
+    <Card className="w-full p-6 hover:translate-y-1 transition-transform bg-secondary-background">
       <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded border-2 border-border ${color} shadow-[2px_2px_0px_0px_var(--border)]`}>
         <div className="text-white">{icon}</div>
       </div>
