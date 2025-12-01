@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
+        'User-Agent': 'CheckTXT/1.0 (https://checktxt.ru)',
       },
       body: formData,
     })

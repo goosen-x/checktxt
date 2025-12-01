@@ -17,6 +17,7 @@ export function TextEditor() {
     highlights,
     activeHighlight,
     setActiveHighlight,
+    clearHighlights,
   } = useEditorStore()
 
   const wordCount = useEditorStore(selectWordCount)
@@ -49,12 +50,18 @@ export function TextEditor() {
   // Handle text change
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value
+
+    // Clear highlights when text is edited to prevent offset mismatch
+    if (highlights.length > 0) {
+      clearHighlights()
+    }
+
     if (newText.length <= CHAR_LIMIT) {
       setText(newText)
     } else {
       setText(newText.slice(0, CHAR_LIMIT))
     }
-  }, [setText])
+  }, [setText, highlights.length, clearHighlights])
 
   // Sync scroll between textarea and overlay
   const syncScroll = useCallback(() => {
@@ -154,10 +161,10 @@ export function TextEditor() {
           placeholder="Введите или вставьте текст для проверки..."
           className={cn(
             baseStyles,
-            'relative bg-transparent resize-none outline-none text-transparent caret-foreground',
+            'relative z-20 bg-transparent resize-none outline-none text-transparent caret-foreground',
             'max-h-[60vh] overflow-y-auto',
             'placeholder:text-muted-foreground',
-            '[&::selection]:bg-transparent [&::selection]:text-transparent'
+            '[&::selection]:bg-main/30 [&::selection]:text-transparent'
           )}
           style={{ caretColor: 'var(--foreground)' }}
           aria-label="Текстовый редактор"
