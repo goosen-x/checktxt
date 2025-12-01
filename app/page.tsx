@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/retroui/Button'
 import { Card } from '@/components/retroui/Card'
-import { Badge } from '@/components/retroui/Badge'
 import { Gravity, MatterBody } from '@/components/ui/gravity'
 import ClickSpark from '@/components/ui/click-spark'
 import { Pencil, Palette, RefreshCw, BarChart3, Search, BookOpen } from 'lucide-react'
@@ -73,15 +72,7 @@ export default function HomePage() {
         <section className="relative mx-auto max-w-7xl px-6 py-16 lg:py-24">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             {/* Left Column - Text */}
-            <div className="flex flex-col items-start">
-              <Badge variant="surface" size="md" className="gap-2 mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-                </span>
-                Бесплатно и без регистрации
-              </Badge>
-
+            <div className="flex flex-col items-start w-full">
               <h1 className="mb-4 text-5xl font-black tracking-tighter md:text-6xl lg:text-7xl">
                 Text<span className="text-main">Check</span>
               </h1>
@@ -90,8 +81,8 @@ export default function HomePage() {
                 Проверка текста на ошибки, стиль, повторы и плагиат
               </p>
 
-              <Link href="/editor">
-                <Button size="lg" variant="default" className="text-lg px-10 py-4 gap-2">
+              <Link href="/editor" className="w-full sm:w-auto">
+                <Button size="lg" variant="default" className="text-lg px-10 py-4 gap-2 w-full sm:w-auto">
                   Начать проверку
                 </Button>
               </Link>
@@ -172,17 +163,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="border-t-2 border-border py-8">
-          <div className="mx-auto max-w-5xl px-6 text-center text-sm text-muted-foreground">
-            <p className="font-bold">TextCheck — бесплатный инструмент для проверки текста</p>
-            <p className="mt-2">
-              <Link href="/policy" className="hover:underline hover:text-foreground transition-colors">
-                Политика конфиденциальности
-              </Link>
-            </p>
-          </div>
-        </footer>
       </div>
     </ClickSpark>
   )

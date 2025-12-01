@@ -96,8 +96,8 @@ export function TextEditor() {
               data-highlight-id={highlight.id}
               className={cn(
                 'cursor-pointer transition-colors',
-                highlight.type === 'error' && 'bg-red-100 dark:bg-red-900/30 underline decoration-wavy decoration-red-500',
-                highlight.type === 'style' && 'bg-amber-100 dark:bg-amber-900/30 underline decoration-wavy decoration-amber-500',
+                highlight.type === 'error' && 'bg-destructive/10 underline decoration-wavy decoration-destructive',
+                highlight.type === 'style' && 'bg-warning/10 underline decoration-wavy decoration-warning',
                 highlight.type === 'repeat' && 'bg-blue-100 dark:bg-blue-900/30',
                 highlight.type === 'plagiarism' && 'bg-purple-100 dark:bg-purple-900/30',
                 isActive && 'ring-2 ring-primary ring-offset-1'
@@ -153,7 +153,7 @@ export function TextEditor() {
         onBlur={() => setIsFocused(false)}
         className={cn(
           'min-h-[350px] w-full rounded-base border-2 border-border bg-secondary-background px-4 py-3',
-          'text-base whitespace-pre-wrap break-words',
+          'text-base font-normal whitespace-pre-wrap break-words',
           'transition-all',
           'focus:outline-none',
           'empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground',

@@ -20,6 +20,7 @@ export function PrivacyToggle() {
         id="privacy-mode"
         checked={privateMode}
         onCheckedChange={togglePrivateMode}
+        className="data-[state=checked]:bg-destructive"
       />
       <Label
         htmlFor="privacy-mode"
@@ -29,7 +30,7 @@ export function PrivacyToggle() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ShieldAlert className={`h-4 w-4 ${privateMode ? 'text-amber-500' : 'text-muted-foreground'}`} />
+              <ShieldAlert className={`h-4 w-4 ${privateMode ? 'text-destructive' : 'text-muted-foreground'}`} />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-xs">
               <p>

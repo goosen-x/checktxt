@@ -45,7 +45,7 @@ export function SEOTab() {
             />
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="sm" onClick={handleAddKeyword}>
+                <Button size="icon" onClick={handleAddKeyword} className="h-10 w-10 rounded-full shrink-0">
                   <Plus className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
@@ -106,15 +106,27 @@ export function SEOTab() {
                 const isOk = !isLow && !isHigh
 
                 return (
-                  <Card key={i} className="p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono text-sm">&quot;{kw.word}&quot;</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm">{kw.density.toFixed(1)}%</span>
-                        {isOk && <CheckCircle className="h-4 w-4 text-green-500" />}
-                        {(isLow || isHigh) && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-                      </div>
-                    </div>
+                  <Card key={i} className="p-0 overflow-hidden">
+                    <div className="flex">
+                      {/* Color indicator */}
+                      <div className={cn(
+                        "w-1 shrink-0",
+                        isOk && 'bg-main',
+                        (isLow || isHigh) && 'bg-warning'
+                      )} />
+                      <div className="flex-1 p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-mono text-sm">&quot;{kw.word}&quot;</span>
+                          <div className="flex items-center gap-2">
+                            <span className={cn(
+                              "text-sm font-medium",
+                              isOk && 'text-main',
+                              (isLow || isHigh) && 'text-warning'
+                            )}>{kw.density.toFixed(1)}%</span>
+                            {isOk && <CheckCircle className="h-4 w-4 text-main" />}
+                            {(isLow || isHigh) && <AlertTriangle className="h-4 w-4 text-warning" />}
+                          </div>
+                        </div>
 
                     <div className="text-xs text-muted-foreground mb-2">
                       Найдено: {kw.count} раз
@@ -128,7 +140,7 @@ export function SEOTab() {
                             key={j}
                             className={cn(
                               'flex-1 min-w-1 rounded-t',
-                              d === 0 ? 'bg-muted' : d < 1 ? 'bg-blue-200 dark:bg-blue-800' : d < 3 ? 'bg-blue-400 dark:bg-blue-600' : 'bg-blue-600 dark:bg-blue-400'
+                              d === 0 ? 'bg-muted' : d < 1 ? 'bg-main/30' : d < 3 ? 'bg-main/60' : 'bg-main'
                             )}
                             style={{ height: `${Math.min(100, (d / 5) * 100)}%` }}
                             title={`Абзац ${j + 1}: ${d.toFixed(1)}%`}
@@ -138,15 +150,17 @@ export function SEOTab() {
                     )}
 
                     {isLow && (
-                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                      <p className="text-xs text-muted-foreground mt-2">
                         Плотность слишком низкая. Добавьте больше упоминаний.
                       </p>
                     )}
                     {isHigh && (
-                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                      <p className="text-xs text-muted-foreground mt-2">
                         Плотность слишком высокая. Возможно переспамлено.
                       </p>
                     )}
+                      </div>
+                    </div>
                   </Card>
                 )
               })}
@@ -160,14 +174,19 @@ export function SEOTab() {
         {seo?.recommendations && seo.recommendations.length > 0 && (
           <div className="space-y-2">
             <h4 className="font-medium text-sm">Рекомендации</h4>
-            <ul className="space-y-1 text-sm">
+            <div className="space-y-2">
               {seo.recommendations.map((rec, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                  <span>{rec}</span>
-                </li>
+                <Card key={i} className="p-0 overflow-hidden shadow-none">
+                  <div className="flex">
+                    <div className="w-1 shrink-0 bg-warning" />
+                    <div className="flex-1 p-3 flex items-start gap-2">
+                      <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+                      <span className="text-sm">{rec}</span>
+                    </div>
+                  </div>
+                </Card>
               ))}
-            </ul>
+            </div>
           </div>
         )}
 

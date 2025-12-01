@@ -28,7 +28,7 @@ export function LanguageSelect() {
       value={language}
       onValueChange={(value) => setLanguage(value as LanguageOption)}
     >
-      <SelectTrigger className="w-[140px]">
+      <SelectTrigger className="w-full">
         <SelectValue>{getDisplayValue()}</SelectValue>
       </SelectTrigger>
       <SelectContent>

@@ -37,6 +37,7 @@
   --accent: var(--main);
   --accent-foreground: var(--main-foreground);
   --destructive: oklch(0.577 0.245 27.325);
+  --warning: oklch(0.769 0.188 70.08);
   --input: var(--secondary-background);
   --radius: 5px;
 }
@@ -71,6 +72,7 @@
   --accent: var(--main);
   --accent-foreground: var(--main-foreground);
   --destructive: oklch(0.704 0.191 22.216);
+  --warning: oklch(0.82 0.16 70.08);
   --input: var(--secondary-background);
 }
 
@@ -103,6 +105,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
   --color-input: var(--input);
 
   --spacing-boxShadowX: 0px;

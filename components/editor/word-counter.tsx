@@ -14,17 +14,17 @@ export function WordCounter({ words, chars, limit = CHAR_LIMIT }: WordCounterPro
   const isOverLimit = chars > limit
 
   return (
-    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    <div className="flex items-center gap-3 text-sm text-foreground">
       <span>{words} слов</span>
-      <span className="text-muted-foreground/50">&middot;</span>
+      <span className="text-border">|</span>
       <span className={cn(
         isOverLimit && 'text-destructive font-medium',
-        isNearLimit && !isOverLimit && 'text-amber-500'
+        isNearLimit && !isOverLimit && 'text-warning'
       )}>
         {chars.toLocaleString()} символов
       </span>
-      <span className="text-muted-foreground/50">&middot;</span>
-      <span className="text-muted-foreground/70">
+      <span className="text-border">|</span>
+      <span>
         Лимит: {(limit / 1000).toFixed(0)}К
       </span>
     </div>

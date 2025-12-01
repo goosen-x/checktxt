@@ -16,7 +16,11 @@ export function ErrorsTab() {
 
   const errorsByCategory = useMemo(() => {
     const categories: Record<string, LTMatch[]> = {}
-    for (const error of errors) {
+    // Фильтруем только те ошибки, для которых есть highlight
+    const activeErrors = errors.filter(error =>
+      highlights.some(h => h.offset === error.offset && h.type === 'error')
+    )
+    for (const error of activeErrors) {
       const category = error.rule.category.name
       if (!categories[category]) {
         categories[category] = []
@@ -24,7 +28,7 @@ export function ErrorsTab() {
       categories[category].push(error)
     }
     return categories
-  }, [errors])
+  }, [errors, highlights])
 
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Орфография', 'Spelling', 'Grammar', 'Грамматика']))
 

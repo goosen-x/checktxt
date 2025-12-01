@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FileText, ArrowLeft, Github } from 'lucide-react'
+import { FileText, ArrowLeft, Github, Pencil } from 'lucide-react'
 import { Button } from '@/components/retroui/Button'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 
@@ -11,32 +11,38 @@ export function Header() {
   const isEditorPage = pathname === '/editor'
 
   return (
-    <header className="border-b-2 border-border bg-secondary-background shadow-[0_4px_0px_0px_var(--border)]">
+    <header className="relative z-50 border-b-2 border-border bg-secondary-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-4">
-          {isEditorPage && (
-            <Link href="/">
-              <Button variant="outline" size="sm" className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Главная
-              </Button>
-            </Link>
-          )}
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="flex h-8 w-8 items-center justify-center rounded border-2 border-border bg-main shadow-[2px_2px_0px_0px_var(--border)]">
-              <FileText className="h-4 w-4 text-main-foreground" />
-            </div>
-            <span>TextCheck</span>
-          </Link>
-        </div>
+        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+          <div className="flex h-9 w-9 items-center justify-center rounded border-2 border-border bg-main shadow-[2px_2px_0px_0px_var(--border)]">
+            <FileText className="h-4 w-4 text-main-foreground" />
+          </div>
+          <span>TextCheck</span>
+        </Link>
 
         <nav className="flex items-center gap-3">
-          {!isEditorPage && (
-            <Link href="/editor">
-              <Button variant="default" size="sm">
-                Редактор
-              </Button>
-            </Link>
+          {isEditorPage ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/">
+                  <Button variant="outline" size="icon" className="h-9 w-9">
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>На главную</TooltipContent>
+            </Tooltip>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/editor">
+                  <Button variant="default" size="icon" className="h-9 w-9">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Открыть редактор</TooltipContent>
+            </Tooltip>
           )}
           <Tooltip>
             <TooltipTrigger asChild>
