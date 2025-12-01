@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { useCallback } from 'react'
+import confetti from 'canvas-confetti'
 import { Button } from '@/components/retroui/Button'
 import { Card } from '@/components/retroui/Card'
 import { Gravity, MatterBody } from '@/components/ui/gravity'
@@ -29,9 +31,40 @@ function GravityPills() {
     }
   }
 
+  const handleAllBodiesOutside = useCallback(() => {
+    // Конфетти с цветами пиллов
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#74B9FF', '#00D2D3', '#A29BFE']
+
+    // Залп конфетти из центра
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors,
+    })
+
+    // Дополнительные залпы слева и справа
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors,
+      })
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors,
+      })
+    }, 150)
+  }, [])
+
   return (
     <div className="relative h-[350px] lg:h-[400px] w-full overflow-hidden rounded-base border-2 border-border bg-secondary-background/50">
-      <Gravity gravity={{ x: 0, y: 1 }} className="h-full w-full">
+      <Gravity gravity={{ x: 0, y: 1 }} className="h-full w-full" onAllBodiesOutside={handleAllBodiesOutside}>
         {pills.map((pill, index) => (
           <MatterBody
             key={index}

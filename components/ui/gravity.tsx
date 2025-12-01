@@ -87,6 +87,7 @@ type GravityProps = {
   addTopWall?: boolean
   autoStart?: boolean
   className?: string
+  onAllBodiesOutside?: () => void
 }
 
 type PhysicsBody = {
@@ -185,6 +186,7 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       addTopWall = true,
       autoStart = true,
       className,
+      onAllBodiesOutside,
       ...props
     },
     ref
@@ -198,6 +200,7 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
     const mouseConstraint = useRef<Matter.MouseConstraint | null>(null)
     const mouseDown = useRef(false)
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
+    const allBodiesOutsideFired = useRef(false)
 
     const isRunning = useRef(false)
 
@@ -263,19 +266,48 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       }
     }, [])
 
+    // Check if a body is outside the container bounds
+    const isBodyOutside = useCallback((body: Matter.Body, width: number, height: number) => {
+      const margin = 100 // Extra margin to ensure body is fully outside
+      const { x, y } = body.position
+      return x < -margin || x > width + margin || y < -margin || y > height + margin
+    }, [])
+
     // Keep react elements in sync with the physics world
     const updateElements = useCallback(() => {
+      if (!canvas.current) {
+        frameId.current = requestAnimationFrame(updateElements)
+        return
+      }
+
+      const width = canvas.current.offsetWidth
+      const height = canvas.current.offsetHeight
+      let allOutside = true
+      let hasAnyBodies = false
+
       bodiesMap.current.forEach(({ element, body }) => {
+        hasAnyBodies = true
         const { x, y } = body.position
         const rotation = body.angle * (180 / Math.PI)
 
         element.style.transform = `translate(${
           x - element.offsetWidth / 2
         }px, ${y - element.offsetHeight / 2}px) rotate(${rotation}deg)`
+
+        // Check if body is inside bounds
+        if (!isBodyOutside(body, width, height)) {
+          allOutside = false
+        }
       })
 
+      // Fire callback when all bodies are outside (only once)
+      if (hasAnyBodies && allOutside && !allBodiesOutsideFired.current && onAllBodiesOutside) {
+        allBodiesOutsideFired.current = true
+        onAllBodiesOutside()
+      }
+
       frameId.current = requestAnimationFrame(updateElements)
-    }, [])
+    }, [isBodyOutside, onAllBodiesOutside])
 
     const initializeRenderer = useCallback(() => {
       if (!canvas.current) return
