@@ -1,22 +1,8 @@
-# Docker Compose конфигурация для CheckTxt
-# Запуск: docker-compose up -d
-
 services:
-  # Имя сервиса (контейнера)
   checktxt:
-    # Собрать образ из Dockerfile в текущей папке
-    build: .
-
-    # Или использовать готовый образ из registry (для CI/CD)
-    # image: your-registry.com/checktxt:latest
-
-    # Проброс портов: хост:контейнер
+    image: ghcr.io/goosen-x/checktxt:latest
     ports:
       - "3005:3000"
-
-    # Перезапуск при падении
     restart: unless-stopped
-
-    # Переменные окружения (если нужны)
     environment:
       - NODE_ENV=production
