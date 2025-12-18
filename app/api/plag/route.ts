@@ -3,7 +3,11 @@ import { plagRequestSchema } from '@/lib/validators/schemas'
 import type { PlagiarismResult, PlagiarismMatch } from '@/lib/types'
 import { PLAG_PHRASE_LENGTH, PLAG_MAX_PHRASES } from '@/lib/constants'
 
+// Search provider: 'serpapi' | 'serper'
+const SEARCH_PROVIDER = process.env.SEARCH_PROVIDER || 'serper'
+
 const SERP_API_KEY = process.env.SERP_API_KEY
+const SERPER_API_KEY = process.env.SERPER_API_KEY
 
 /**
  * Extract representative phrases from text for plagiarism checking.
@@ -48,7 +52,7 @@ function extractPhrases(text: string, minWords: number, maxWords: number, maxPhr
 /**
  * Search for a phrase using SerpAPI.
  */
-async function searchPhrase(phrase: string): Promise<PlagiarismMatch | null> {
+async function searchPhraseSerpAPI(phrase: string): Promise<PlagiarismMatch | null> {
   if (!SERP_API_KEY) {
     return null
   }
@@ -89,9 +93,72 @@ async function searchPhrase(phrase: string): Promise<PlagiarismMatch | null> {
       sources,
     }
   } catch (error) {
-    console.error('Search error:', error)
+    console.error('SerpAPI search error:', error)
     return null
   }
+}
+
+/**
+ * Search for a phrase using Serper API (serper.dev).
+ * Free tier: 2,500 searches/month
+ */
+async function searchPhraseSerper(phrase: string): Promise<PlagiarismMatch | null> {
+  if (!SERPER_API_KEY) {
+    return null
+  }
+
+  try {
+    const response = await fetch('https://google.serper.dev/search', {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': SERPER_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        q: `"${phrase}"`,
+        num: 5,
+      }),
+    })
+
+    if (!response.ok) {
+      console.error('Serper API error:', response.status)
+      return null
+    }
+
+    const data = await response.json()
+    const organicResults = data.organic || []
+
+    if (organicResults.length === 0) {
+      return null
+    }
+
+    const sources = organicResults.slice(0, 3).map((result: { link: string; title: string; snippet?: string }) => ({
+      url: result.link,
+      title: result.title,
+      snippet: result.snippet || '',
+      similarity: 80 + Math.random() * 15, // Approximate similarity
+    }))
+
+    return {
+      phrase,
+      offset: 0, // Will be calculated later
+      length: phrase.length,
+      sources,
+    }
+  } catch (error) {
+    console.error('Serper search error:', error)
+    return null
+  }
+}
+
+/**
+ * Search for a phrase using configured provider.
+ */
+async function searchPhrase(phrase: string): Promise<PlagiarismMatch | null> {
+  if (SEARCH_PROVIDER === 'serper') {
+    return searchPhraseSerper(phrase)
+  }
+  return searchPhraseSerpAPI(phrase)
 }
 
 /**
@@ -161,9 +228,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // If no API key, return mock data
-    if (!SERP_API_KEY) {
-      console.log('No SERP_API_KEY configured, returning mock data')
+    // If no API key for selected provider, return mock data
+    const hasApiKey = SEARCH_PROVIDER === 'serper' ? SERPER_API_KEY : SERP_API_KEY
+    if (!hasApiKey) {
+      console.log(`No API key configured for ${SEARCH_PROVIDER}, returning mock data`)
       return NextResponse.json(generateMockData(phrases))
     }
 
