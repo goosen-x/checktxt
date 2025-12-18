@@ -46,6 +46,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/apps/checktxt
-            docker compose down --remove-orphans
+            docker compose down --remove-orphans || true
+            docker rm -f checktxt-checktxt-1 || true
             docker compose pull
             docker compose up -d
